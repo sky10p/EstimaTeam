@@ -1,24 +1,25 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Header } from './components/Header/Header';
+import { EstimationInput } from './components/EstimationInput/EstimationInput';
+import { Estimation, EstimationOfPerson } from './types/Estimations';
+import { EstimationsTable } from './components/EstimationsTable/EstimationsTable';
 
-function App() {
+const App = () => {
+  const [estimations, setEstimations] = React.useState<EstimationOfPerson[]>([]);
+
+  const estimationsChanged = (estimations: Estimation[]) => {
+    setEstimations([{person: "Pablo Guijarro", estimations: estimations}]);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header title='EstimaTeam' />
+      <div>
+        <EstimationInput onEstimationChange={estimationsChanged} />
+      </div>
+      <div>
+        <EstimationsTable estimations={estimations} />
+      </div>
     </div>
   );
 }
