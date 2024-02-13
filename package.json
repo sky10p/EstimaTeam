@@ -1,0 +1,17 @@
+{
+  "name": "EstimaTeam",
+  "packageManager": "yarn@4.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:backend": "yarn workspace @estimateam/backend dev",
+    "start:frontend": "yarn workspace @estimateam/frontend start"
+    
+  },
+  "volta": {
+    "node": "20.11.0",
+    "yarn": "1.22.19"
+  }
+}
