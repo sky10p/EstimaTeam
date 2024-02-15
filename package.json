@@ -6,8 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:backend": "yarn workspace @estimateam/backend dev",
-    "start:frontend": "yarn workspace @estimateam/frontend start"
+    "dev:backend": "npm run -w @estimateam/backend dev",
+    "start:frontend": "npm run -w @estimateam/frontend start"
     
   },
   "volta": {

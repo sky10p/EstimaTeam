@@ -25,5 +25,8 @@ export const getEstimation = (value: string): Estimation => {
 };
 
 export const getEstimations = (value: string): Estimation[] => {
+  if(!value || value === "") {
+    return [];
+  }
   return value.split(" ").map(getEstimation);
 };

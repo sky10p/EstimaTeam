@@ -1,10 +1,34 @@
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 22px;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 20px;
+}
+
 .header {
-  background-color: #282c34;
-  min-height: 20vh;
+  background-color: #f0f0f0;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 24px;
+}
+
+.container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin-top: 30px;
+}
+
+.room-id {
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.full-width {
+  width: 100%;
 }

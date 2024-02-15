@@ -9,11 +9,6 @@ const StyledTable = styled.table`
   margin-top: 20px;
 `;
 
-const StyledTitle = styled.h2`
-  color: #333;
-  font-size: 20px;
-  margin-bottom: 10px;
-`;
 export type EstimationsTableProps = {
   estimations: EstimationOfPerson[];
 };
@@ -25,8 +20,6 @@ export const EstimationsTable: React.FC<EstimationsTableProps> = ({
 
   
   return (
-    <div>
-      <StyledTitle>Estimations</StyledTitle>
       <StyledTable>
         <tbody>
             {estimations.map((estimation, index) => (
@@ -34,6 +27,5 @@ export const EstimationsTable: React.FC<EstimationsTableProps> = ({
             ))}
         </tbody>
       </StyledTable>
-    </div>
   );
 };

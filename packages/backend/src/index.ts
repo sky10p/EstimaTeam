@@ -17,15 +17,20 @@ type UserInfo = {
   estimations: string;
 }
 const users = new Map<Socket, UserInfo>();
+const rooms = new Map<Socket, string>();
 
-const setPerson = (socket: Socket, name: string, room: string) => {
+const setPerson = (socket: Socket, name: string) => {
   const user = users.get(socket);
   if(user) {
     user.name = name;
-    user.room = room;
-    user.estimations = "";
     users.set(socket, user);
+  } else {
+    users.set(socket, {name, room: "", estimations: ""});
   }
+}
+
+const setRoom = (socket: Socket, room: string) => {
+ rooms.set(socket, room);
 }
 
 const setEstimations = (socket: Socket, estimations: string) => {
@@ -41,7 +46,7 @@ const removeUser = (socket: Socket) => {
 }
 
 const sendEstimations = (room: string) => {
-  const usersInRoom = Array.from(users.values()).filter((user) => user.room === room);
+  const usersInRoom = Array.from(users.keys()).filter((socket) => socket.rooms.has(room)).map((socket) => users.get(socket) as UserInfo);
   if(usersInRoom.length === 0) {
     return;
   }
@@ -57,25 +62,45 @@ io.on("connection", (socket: Socket) => {
 
   socket.on("join", (room: string) => {
     socket.join(room);
+    setRoom(socket, room);
     console.log(`User joined room ${room}`);
   });
   
-  socket.on("name", (room: string, name: string) => {
-      setPerson(socket, name,room);
+  socket.on("name", (name: string) => {
+      setPerson(socket, name);
       console.log(`User ${name} connected`);
-      sendEstimations(room);
+      const currentRoom = rooms.get(socket);
+      if(!currentRoom) {
+
+        return;
+      }
+      sendEstimations(currentRoom);
+      console.log(`User ${name} sent estimations in room ${currentRoom}`);
     }
   );
 
-  socket.on("userEstimations", (room: string, estimations: string) => {
+  socket.on("userEstimations", (estimations: string) => {
     setEstimations(socket, estimations);
-    console.log(`User ${users.get(socket)?.name} sent estimations: ${estimations}`);
-    sendEstimations(room);
-  });
+    const currentRoom = rooms.get(socket);
+    if(!currentRoom) {
+      return;
+    }
+    sendEstimations(currentRoom);
+    console.log(`User ${users.get(socket)?.name} sent estimations in room ${currentRoom}: ${estimations}`);
+    
+      });
 
   socket.on("disconnect", () => {
     console.log("Client disconnected");
+    const userName = users.get(socket)?.name;
     removeUser(socket);
+    const currentRoom = rooms.get(socket);
+    if(!currentRoom) {
+      return;
+    }
+    sendEstimations(currentRoom);
+    console.log(`User ${userName} disconnected from room ${currentRoom}`);
+   
   });
 
   console.log("Client connected");

@@ -11,6 +11,7 @@ export type EstimationsTableRowProps = {
 const StyledNameEstimatorColumn = styled.td`
   padding: 10px;
   border: 1px solid #ccc;
+  min-width: 300px;
   font-size: 16px;
   text-align: center;
   font-weight: bold;
