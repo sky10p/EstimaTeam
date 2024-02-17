@@ -56,15 +56,15 @@ export const useRoom = (roomId: string) => {
     return !querySnapshot.empty;
   };
 
-  const addEstimation = async (estimation: string) => {
+  const addEstimation = useCallback(async (estimation: string) => {
     if (!user || !user.id) {
       return;
     }
     const userRef = doc(db, "users", user.id);
     const userWithEstimation = { ...user, estimation };
-
+  
     await updateDoc(userRef, userWithEstimation);
-  };
+  }, [user]);
 
   const removeUserFromRoom = async () => {
     if (!user || !user.id) {

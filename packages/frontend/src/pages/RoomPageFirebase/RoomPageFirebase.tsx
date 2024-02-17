@@ -8,6 +8,7 @@ import { RoomShare } from "../../components/RoomShare";
 import { useLoadingDispatcherContext } from "../../contexts/LoadingContext";
 import { PersonFragment } from "./fragments/PersonFragment/PersonFragment";
 import { useCallback } from "react";
+import { RoomFragment } from "./fragments/RoomFragment";
 export const RoomFirebase = () => {
   const { id } = useParams();
 
@@ -19,9 +20,9 @@ export const RoomFirebase = () => {
     return <div>No room id</div>;
   }
 
-  const estimationsChanged = (estimations: Estimation[]) => {
+  const estimationsChanged = useCallback((estimations: Estimation[]) => {
     addEstimation(estimations.join(" "));
-  };
+  }, [addEstimation]);
 
   const setPerson = useCallback((name: string) => {
     joinRoom(name);
@@ -34,15 +35,6 @@ export const RoomFirebase = () => {
     return !exists;
   }, []);
 
-  const RoomFragment = () => (
-    <>
-      <EstimationInput onEstimationChange={estimationsChanged} />
-      <h1>Estimations</h1>
-      <div className="full-width">
-        <EstimationsTable estimations={usersAndEstimations} />
-      </div>
-    </>
-  );
 
   return (
     <>
@@ -54,7 +46,7 @@ export const RoomFirebase = () => {
             setPerson={setPerson}
           />
         ) : (
-          <RoomFragment />
+          <RoomFragment estimationsChanged={estimationsChanged} usersAndEstimations={usersAndEstimations} />
         )}
       </div>
     </>
