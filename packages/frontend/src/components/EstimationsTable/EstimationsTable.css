@@ -1,0 +1,28 @@
+table {
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    margin-left: 24px;
+    margin-right: 24px;
+}
+th, td {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+    white-space: nowrap; /* Evita que las celdas se rompan automáticamente */
+    overflow: hidden; /* Oculta el contenido que desborda */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos si el contenido es demasiado largo */
+}
+th {
+    background-color: #0074D9;
+    color: white;
+}
+th:first-child {
+    background-color: transparent; /* Quita el fondo de la primera columna */
+    border: none; /* Quita el borde de la primera columna */
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}

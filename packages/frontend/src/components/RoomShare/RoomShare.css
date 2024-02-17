@@ -1,0 +1,30 @@
+.room-share-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.room-share-text {
+  font-size: 20px;
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.room-share-qr {
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
+}
+
+.room-share-text span {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.room-share-text a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { User } from "./models";
-import { authenticate, db, disconnect } from "../../firebase/firebase";
+import { db} from "../../firebase/firebase";
 import {
   doc,
   onSnapshot,
@@ -13,38 +13,47 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { EstimationOfPerson, getEstimations } from "../../types/Estimations";
+import { useAuthContext } from "../../contexts/AuthContext";
+import { useLoadingDispatcherContext, useLoadingStateContext } from "../../contexts/LoadingContext";
 
 export const useRoom = (roomId: string) => {
   const [user, setUser] = useState<User | null>(null);
-  const [anonymousLogged, setAnonymousLogged] = useState<string | null>(null);
-  const [errorUser, setErrorUser] = useState<boolean>(false);
   const [usersAndEstimations, setUsersAndEstimations] = useState<
     EstimationOfPerson[]
   >([]);
+  const {anonymousLogged} = useAuthContext();
+  const setLoading = useLoadingDispatcherContext();
 
-  const joinRoom = async (userName: string) => {
-    const user: User = {
+  const joinRoom = useCallback(async (userName: string) => {
+    setLoading(true);
+    const newUser: User = {
       id: anonymousLogged,
       name: userName,
       roomId: roomId,
       estimation: "",
     };
+    const userExistsInRoom = await userExists(userName);
+    if (userExistsInRoom || !newUser.id) {
+      console.log("User already exists");
+    } else {
+      const usersCollectionRef = collection(db, "users");
+      const usersDocumentRef = doc(usersCollectionRef, newUser.id);
+      await setDoc(usersDocumentRef, newUser);
+      setUser({ ...newUser, id: newUser.id });
+    }
+    setLoading(false);
+  }, [ roomId, anonymousLogged]);
+
+  const userExists = async (userName: string) => {
     const usersCollectionRef = collection(db, "users");
     const q = query(
       usersCollectionRef,
       where("roomId", "==", roomId),
-      where("userName", "==", userName)
+      where("name", "==", userName)
     );
 
     const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty || !user.id) {
-      setErrorUser(true);
-    } else {
-      const usersDocumentRef = doc(usersCollectionRef, user.id);
-      await setDoc(usersDocumentRef, user);
-      setUser({ ...user, id: user.id });
-      setErrorUser(false);
-    }
+    return !querySnapshot.empty;
   };
 
   const addEstimation = async (estimation: string) => {
@@ -88,38 +97,24 @@ export const useRoom = (roomId: string) => {
   }, [roomId, user]);
 
   useEffect(() => {
+    if (!user || !user.id) {
+      return;
+    }
     window.addEventListener("beforeunload", removeUserFromRoom);
 
     return () => {
       window.removeEventListener("beforeunload", removeUserFromRoom);
+      removeUserFromRoom();
     };
   }, [roomId, user]);
 
-  useEffect(() => {
-
-      authenticate().then((userId) => {
-        if (userId) {
-          
-          setAnonymousLogged(userId);
-        }
-      });
-    
-
-    return () => {
-      disconnect().then(()=>{
-        setAnonymousLogged(null);
-
-      });
-
-    };
-  }, []);
+  
 
   return {
     user,
-    errorUser,
     joinRoom,
     addEstimation,
     usersAndEstimations,
-    anonymousLogged,
+    userExists
   };
 };

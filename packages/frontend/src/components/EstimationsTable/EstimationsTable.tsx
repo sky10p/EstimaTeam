@@ -1,13 +1,8 @@
 import { EstimationOfPerson } from "../../types/Estimations";
 import React from "react";
 
-import styled from "styled-components";
-import { EstimationsTableRow } from "./EStimationsTableRow";
+import "./EstimationsTable.css";
 
-const StyledTable = styled.table`
-  border-collapse: collapse;
-  margin-top: 20px;
-`;
 
 export type EstimationsTableProps = {
   estimations: EstimationOfPerson[];
@@ -17,15 +12,31 @@ export const EstimationsTable: React.FC<EstimationsTableProps> = ({
   estimations,
 }) => {
   
-
-  
+const numberTasks = estimations.map((estimation) => estimation.estimations.length).reduce((max, current) => Math.max(max, current), 0);
+ const tasks = Array.from({length: numberTasks}, (_, index) => index + 1);
   return (
-      <StyledTable>
-        <tbody>
-            {estimations.map((estimation, index) => (
-                <EstimationsTableRow key={index} personName={estimation.person} estimations={estimation.estimations} />
+
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            {tasks.map((task, index) => (
+              <th key={index}>Task {task}</th>
             ))}
+
+          </tr>
+        </thead>
+        <tbody>
+          {estimations.map((estimation, index) => (
+            <tr key={estimation.person}>
+              <td>{estimation.person}</td>
+              {tasks.map((task, index) => {
+                const estimationOfTask = estimation.estimations[index];
+                return <td key={index}>{estimationOfTask}</td>;
+              })}
+            </tr>
+          ))}
         </tbody>
-      </StyledTable>
+      </table>
   );
 };

@@ -22,9 +22,5 @@ export const authenticate = async () => {
     const user = await signInAnonymously(auth);
     return user.user.uid;
   }
-};
-
-export const disconnect = async () => {
-  const auth = getAuth(app);
-  await auth.signOut();
+  return auth.currentUser.uid;
 };

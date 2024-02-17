@@ -1,45 +1,38 @@
-
 import { EstimationInput } from "../../components/EstimationInput/EstimationInput";
 import { EstimationsTable } from "../../components/EstimationsTable/EstimationsTable";
 import { useParams } from "react-router-dom";
-import { InputWithButton } from "../../components/InputWithButton";
 import { useRoom } from "./useRoom";
 import { generateUuid } from "../../utils/utils";
-import { Estimation } from "../../types/Estimations"
-
+import { Estimation } from "../../types/Estimations";
+import { RoomShare } from "../../components/RoomShare";
+import { useLoadingDispatcherContext } from "../../contexts/LoadingContext";
+import { PersonFragment } from "./fragments/PersonFragment/PersonFragment";
+import { useCallback } from "react";
 export const RoomFirebase = () => {
-  
   const { id } = useParams();
 
-  const {joinRoom, user, errorUser, addEstimation, usersAndEstimations, anonymousLogged} = useRoom(id ?? generateUuid());
+  const { joinRoom, user, addEstimation, usersAndEstimations, userExists } =
+    useRoom(id ?? generateUuid());
+  const setLoading = useLoadingDispatcherContext();
 
-
- 
   if (!id) {
     return <div>No room id</div>;
   }
 
-
   const estimationsChanged = (estimations: Estimation[]) => {
     addEstimation(estimations.join(" "));
-  }
+  };
 
-  const setPerson = (name: string) => {
+  const setPerson = useCallback((name: string) => {
     joinRoom(name);
-  }
-  
+  }, [joinRoom]);
 
-  const PersonFragment = () => (
-    <InputWithButton
-      label="Choose a name"
-      placeholder="Your name here"
-      textButton="Go to the room with this name"
-      onClickButton={setPerson}
-      validate={() => !errorUser}
-      required={true}
-      validationErrorMessage="User already exists"
-    />
-  );
+  const ifUserNotExists = useCallback(async (userName: string) => {
+    setLoading(true);
+    const exists = await userExists(userName);
+    setLoading(false);
+    return !exists;
+  }, []);
 
   const RoomFragment = () => (
     <>
@@ -54,9 +47,15 @@ export const RoomFirebase = () => {
   return (
     <>
       <div className="container">
-        {anonymousLogged ? "Logged" : "Not logged"}
-        <div className="room-id">Room: {id}</div>
-        {!user ? <PersonFragment /> : <RoomFragment />}
+        <RoomShare roomId={id} />
+        {!user ? (
+          <PersonFragment
+            ifUserNotExists={ifUserNotExists}
+            setPerson={setPerson}
+          />
+        ) : (
+          <RoomFragment />
+        )}
       </div>
     </>
   );
