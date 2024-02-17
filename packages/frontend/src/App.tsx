@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { Room } from './pages/RoomPage';
 import { Header } from './components/Header/Header';
 import { CreateRoomPage } from './pages/CreateRoomPage/CreateRoomPage';
+import { RoomFirebase } from './pages/RoomPageFirebase/RoomPageFirebase';
 
 const App = () => {
   
@@ -15,7 +15,7 @@ const App = () => {
     <Router>
      <Routes>
         <Route path="/" element={<CreateRoomPage/>} />
-        <Route path="/room/:id" element={<Room/>} />
+        <Route path="/room/:id" element={<RoomFirebase/>} />
         <Route path='*' element={<div>Not Found</div>} />
      </Routes>
    </Router>

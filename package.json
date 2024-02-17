@@ -8,10 +8,11 @@
   "scripts": {
     "dev:backend": "npm run -w @estimateam/backend dev",
     "start:frontend": "npm run -w @estimateam/frontend start"
-    
   },
   "volta": {
     "node": "20.11.0",
     "yarn": "1.22.19"
+  },
+  "devDependencies": {
   }
 }
