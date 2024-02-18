@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 const firebaseConfig = {
@@ -15,9 +16,15 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+// (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = "";
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider("6LcI7XYpAAAAAChnKM7POd3xm_Lb8obaFIF5kKhz"),
+  isTokenAutoRefreshEnabled: true,
+
+})
+export const db = getFirestore(appCheck.app);
 export const authenticate = async () => {
-  const auth = getAuth(app);
+  const auth = getAuth(appCheck.app);
   if (auth.currentUser === null) {
     const user = await signInAnonymously(auth);
     return user.user.uid;
